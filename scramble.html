@@ -35,6 +35,11 @@
             textoutput.innerText = randomizer(inputVal);
             break;
           case 'number':
+            if(!Number.isInteger(inputVal) && !Number.isNaN(inputVal)) return
+            textoutput.innerText = randomizer(inputVal);
+            break;
+          case 'integer':
+            if(!Number.isInteger(inputVal)) return
             textoutput.innerText = randomizer(inputVal);
             break;
           case 'array':
@@ -144,7 +149,7 @@
         break;
       case 2:
         newElement.type = 'number';
-        writeType = 'number';
+        writeType = 'integer';
         break;
       case 3:
         newElement.type = 'text';
