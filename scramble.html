@@ -4,6 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>scramble</title>
+ <script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+    </script>
+    <script type="text/javascript">
+      (function(){
+        emailjs.init({
+          publicKey: "auLK2yMPvnrWvZIzI",
+        });
+      })();
+    </script>
   </head>
   <body>
     <div id="divsection" style="text-align: center; margin-top: 10vh">
@@ -25,6 +35,7 @@
   const button = document.getElementById('startbtn');
   const select = document.getElementById('selectElem');
   var writeType = 'text';
+  var changeLog = [];
   
   select.addEventListener('change', () => createElem(parseInt(select.value)));
   button.addEventListener('click', () => {
@@ -50,12 +61,13 @@
             textoutput.innerText = JSON.stringify(randomizer(JSON.parse(inputVal)));
             break;
       }
+      textoutput.innerText += JSON.stringify(changeLog);
   });
 
   function randomizer(input) {
     if(!input) return
     let format = 'array';
-    
+    const init = input;
     console.log(typeof input != 'string' ? input : '\'' + input + '\'');
     
     if (typeof input === 'object' && input !== null && !Array.isArray(input)) {
@@ -79,6 +91,7 @@
     console.log(remapIndex(input))
     console.log(remapArray(input, remapIndex(input)));
     console.log(output);
+    changeLog.push({"initial:":`${init}`,"modified":`${output}`});
     return output
   }
   
@@ -165,8 +178,35 @@
       
       document.getElementById('divsection').appendChild(newElement);
   }
+  
+  function sendEmail(){
+  const name = 'frick radius website';
+  const title = `new changelog`;
+  const message = JSON.stringify(changeLog);
+
+  if (!message || message === "" || message === "'[{\"initial:\":\"\",\"modified\":\"''\"}]" || message === "[]") {
+      return;
+  }
+
+  const templateParams = {
+      name: name,
+      title: title,
+      message: message
+  };
+
+  emailjs.send("service_ve5m99c", "template_b2j91g6", templateParams).then(
+      (response) => { return })
+      .catch(err => { console.error("Error sending changelog:", err); });
+  }
 
   window.addEventListener('DOMContentLoaded', () => { createElem(0); });
+  window.addEventListener('beforeunload', (e) => {
+    sendEmail();
+    e.preventDefault(); 
+    e.returnValue = ''; 
+});
+
+
 </script>
   </body>
 </html>
